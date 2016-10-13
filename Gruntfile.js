@@ -117,7 +117,7 @@ module.exports = function(grunt) {
 
   grunt.registerTask('deploy', function(n) {
     if (grunt.option('prod')) {
-      grunt.task.run(['deploy', 'gitpush']);
+      grunt.task.run(['gitpush']);
     } else {
       grunt.task.run([ 'build', 'concat', 'uglify']);
     }
