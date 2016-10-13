@@ -36,13 +36,18 @@ module.exports = function(grunt) {
       }
     },
 
-    // app, lib, public/client, views, server.js, server-config.js
-
+    gitpush: {
+      target: {
+        options: {
+          remote: 'live', branch: 'master'
+        }
+      }
+    },
 
     eslint: {
       target: [
         // Add list of files to lint here
-        'app/**/*.js', 'lib/**/*.js', 'public/client/**/*.js', 'views/**/*.ejs', 'server.js', 'server-config.js'
+        'app/**/*.js', 'lib/**/*.js', 'public/client/**/*.js', 'server.js', 'server-config.js'
       ]
     },
 
@@ -104,18 +109,18 @@ module.exports = function(grunt) {
 
   grunt.registerTask('upload', function(n) {
     if (grunt.option('prod')) {
-      // add your production server task here
     } else {
       grunt.task.run([ 'server-dev' ]);
     }
   });
 
-  grunt.registerTask('deploy', [
-    // add your deploy tasks here
-    'build',
-    'concat',
-    'uglify'
-  ]);
+  grunt.registerTask('deploy', function(n) {
+    if (grunt.option('prod')) {
+      grunt.task.run(['deploy', 'gitpush']);
+    } else {
+      grunt.task.run([ 'build', 'concat', 'uglify']);
+    }
+  });
 
 
 };
