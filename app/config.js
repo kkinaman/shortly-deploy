@@ -1,12 +1,24 @@
 var path = require('path');
-var knex = require('knex')({
-  client: 'sqlite3',
-  connection: {
-    filename: path.join(__dirname, '../db/shortly.sqlite')
-  },
-  useNullAsDefault: true
+var MongoClient = require('mongodb').MongoClient;
+// var knex = require('knex')({
+//   client: 'sqlite3',
+//   connection: {
+//     filename: path.join(__dirname, '../db/shortly.sqlite')
+//   },
+//   useNullAsDefault: true
+// });
+// var db = require('bookshelf')(knex);
+
+// Connection URL
+var url = 'mongodb://107.170.200.33/data/db';
+
+// Use connect method to connect to the server
+MongoClient.connect(url, function(err, db) {
+  assert.equal(null, err);
+  console.log("Connected successfully to server");
+
+  db.close();
 });
-var db = require('bookshelf')(knex);
 
 db.knex.schema.hasTable('urls').then(function(exists) {
   if (!exists) {
