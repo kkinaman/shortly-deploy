@@ -2,7 +2,15 @@ module.exports = function(grunt) {
 
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
+
     concat: {
+      options: {
+        separator: ';',
+      },
+      dist: {
+        src: ['public/client/**/*.js', 'public/lib/**/*.js'],
+        dest: 'public/dist/build.js',
+      },
     },
 
     mochaTest: {
@@ -21,11 +29,20 @@ module.exports = function(grunt) {
     },
 
     uglify: {
+      target: {
+        files: {
+          'public/dist/build.min.js': ['public/dist/build.js']
+        }
+      }
     },
+
+    // app, lib, public/client, views, server.js, server-config.js
+
 
     eslint: {
       target: [
         // Add list of files to lint here
+        'app/**/*.js', 'lib/**/*.js', 'public/client/**/*.js', 'views/**/*.ejs', 'server.js', 'server-config.js'
       ]
     },
 
@@ -39,6 +56,7 @@ module.exports = function(grunt) {
           'public/lib/**/*.js',
         ],
         tasks: [
+          'eslint',
           'concat',
           'uglify'
         ]
@@ -71,12 +89,17 @@ module.exports = function(grunt) {
   ////////////////////////////////////////////////////
   // Main grunt tasks
   ////////////////////////////////////////////////////
+  grunt.registerTask('default', [
+    
+  ]);
 
   grunt.registerTask('test', [
     'mochaTest'
   ]);
 
+  //elint should be first so that if it fails, the rest won't run
   grunt.registerTask('build', [
+    'eslint'
   ]);
 
   grunt.registerTask('upload', function(n) {
