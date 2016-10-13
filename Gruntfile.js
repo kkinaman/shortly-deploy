@@ -99,7 +99,7 @@ module.exports = function(grunt) {
 
   //elint should be first so that if it fails, the rest won't run
   grunt.registerTask('build', [
-    'eslint'
+    'eslint', 'test'
   ]);
 
   grunt.registerTask('upload', function(n) {
@@ -112,6 +112,9 @@ module.exports = function(grunt) {
 
   grunt.registerTask('deploy', [
     // add your deploy tasks here
+    'build',
+    'concat',
+    'uglify'
   ]);
 
 
