@@ -97,7 +97,7 @@ describe('', function() {
           baseUrl: 'http://127.0.0.1:4568',
           visits: 0
         });
-
+        link.code = link.generateCode(link.url);
         link.save(function() {
           done();
         });
@@ -106,12 +106,16 @@ describe('', function() {
       it('Returns the same shortened code if attempted to add the same URL twice', function(done) {
         var firstCode = link.code;
         request(app)
-          .post('/links')
+          .post('/links', function(err, response, body) {
+            if (err) {
+              console.log('error: ', error);
+            }
+          })
           .send({
             'url': 'http://www.roflzoo.com/'})
           .expect(200)
           .expect(function(res) {
-            var secondCode = res.body.code;
+            var secondCode = JSON.parse(res.text).code;
             expect(secondCode).to.equal(firstCode);
           })
           .end(done);
@@ -231,7 +235,7 @@ describe('', function() {
         .end(done);
     });
 
-    xit('Users that do not exist are kept on login page', function(done) {
+    it('Users that do not exist are kept on login page', function(done) {
       request(app)
         .post('/login')
         .send({
