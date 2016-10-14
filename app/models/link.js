@@ -4,11 +4,11 @@ var crypto = require('crypto');
 
 var Link = db.mongoose.model('Link', db.linkSchema);
 
-db.linkSchema.methods.generateCode = function(url) {
-  var shasum = crypto.createHash('sha1');
-  shasum.update(url);
-  return shasum.digest('hex').slice(0, 5);
-};
+// db.linkSchema.methods.generateCode = function(url) {
+//   var shasum = crypto.createHash('sha1');
+//   shasum.update(url);
+//   return shasum.digest('hex').slice(0, 5);
+// };
 
 // var Link = mongoose.Model.extend({
 //   tableName: 'urls',

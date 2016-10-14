@@ -1,6 +1,9 @@
 var path = require('path');
 // var MongoClient = require('mongodb').MongoClient;
 var mongoose = require('mongoose');
+var bcrypt = require('bcrypt-nodejs');
+var crypto = require('crypto');
+var Promise = require('bluebird');
 var Schema = mongoose.Schema;
 
 // var knex = require('knex')({
@@ -13,7 +16,7 @@ var Schema = mongoose.Schema;
 // var db = require('bookshelf')(knex);
 
 // Connection URL
-var url = 'mongodb://localhost:4568/database';
+var url = 'mongodb://localhost:27017/shortlyDB';
 mongoose.connect(url);
 
 var db = mongoose.connection;
@@ -34,11 +37,31 @@ var linkSchema = exports.linkSchema = new Schema({
   createdAt: { type: Date, default: Date.now }
 });
 
+linkSchema.methods.generateCode = function(url) {
+  var shasum = crypto.createHash('sha1');
+  shasum.update(url);
+  return shasum.digest('hex').slice(0, 5);
+};
+
 var userSchema = exports.userSchema = new Schema({
   username: String,
-  passwords: String,
+  password: String,
   createdAt: { type: Date, default: Date.now }
 });
+
+userSchema.methods.comparePassword = function(attemptedPassword, callback) {
+  bcrypt.compare(attemptedPassword, this.get('password'), function(err, isMatch) {
+    callback(isMatch);
+  });
+};
+
+userSchema.methods.hashPassword = function() {
+  var cipher = Promise.promisify(bcrypt.hash);
+  return cipher(this.get('password'), null, null).bind(this)
+    .then(function(hash) {
+      this.set('password', hash);
+    });
+};
 
 // Use connect method to connect to the server
 // MongoClient.connect(url, function(err, db) {
